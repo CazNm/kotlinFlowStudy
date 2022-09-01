@@ -66,22 +66,41 @@ class MainActivity : ComponentActivity() {
         //collect 를 여러곳에서 진행하는 이유, channel의 pan out 과 flow 의 동작의 차이점을 알기 위해서 했음.
 
 
+//
+//        MainScope().launch {
+//            testViewModel.sharedFlow.collect {
+//                println("sharedFlow: $it")
+//            }
+//        }
+//
+//        MainScope().launch {
+//            testViewModel.stateFlow.collect {
+//                println("stateFlow: $it")
+//            }
+//        }
+//
+//        MainScope().launch {
+//            testViewModel.repeatSameDataToEachFlow()
+//        }
+
+        //shareIn, stateIn test 를 위한 기본 동작 코드
 
         MainScope().launch {
-            testViewModel.sharedFlow.collect {
-                println("sharedFlow: $it")
+
+            testViewModel.connectionFlow.collect {
+                println("connectionFlow : $it")
             }
         }
 
+        //shareIn code
         MainScope().launch {
-            testViewModel.stateFlow.collect {
-                println("stateFlow: $it")
+            delay(5100)
+            testViewModel.connectionSharedFlow.collect {
+                println("connectionSharedFlow #2: $it")
             }
         }
 
-        MainScope().launch {
-            testViewModel.repeatSameDataToEachFlow()
-        }
+        // 원본 cold stream 과 다르게 shareIn, stateIn 으로 생성된 hot stream 은 다른 coroutine Scope 에서 동작한다.
 
         //stateFlow 의 경우 내부적으로 동일한 값이 들어올 경우 SKIP 한다! sharedFlow 의 경우는 skip 하지 않는다.
         setContent {
